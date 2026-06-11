@@ -552,11 +552,117 @@
       color: #aaa;
       margin-bottom: 12px;
     }
-    .comments-loading {
-      text-align: center;
-      color: #bbb;
-      padding: 24px 0;
+
+    .comment-form {
+      margin-bottom: 16px;
+    }
+    .comment-form input,
+    .comment-form textarea {
+      width: 100%;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 10px 12px;
       font-size: 14px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      margin-bottom: 8px;
+      resize: vertical;
+    }
+    .comment-form input:focus,
+    .comment-form textarea:focus {
+      border-color: #667eea;
+    }
+    .comment-form textarea {
+      min-height: 60px;
+      max-height: 150px;
+    }
+    .comment-form-row {
+      display: flex;
+      gap: 8px;
+    }
+    .comment-form-row input {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .comment-form .submit-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.15s;
+      white-space: nowrap;
+    }
+    .comment-form .submit-btn:active {
+      transform: scale(0.95);
+    }
+    .comment-form .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .comment-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .comment-item:last-child {
+      border-bottom: none;
+    }
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #f093fb);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .comment-author {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+    }
+    .comment-time {
+      font-size: 11px;
+      color: #bbb;
+    }
+    .comment-body {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.5;
+      margin-left: 36px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .comment-loading,
+    .comment-error {
+      text-align: center;
+      padding: 20px 0;
+      font-size: 14px;
+      color: #bbb;
+    }
+    .comment-error {
+      color: #e06c6c;
+    }
+    .comment-empty {
+      text-align: center;
+      padding: 20px 0;
+      font-size: 14px;
+      color: #ccc;
     }
 
     /* ========== Responsive ========== */
@@ -570,11 +676,15 @@
       .day-cell .photo-indicator { font-size: 8px; }
       .settings-bar input { font-size: 12px; padding: 6px; }
       .modal-btn { font-size: 14px; padding: 12px 6px; }
+      .comment-form-row { flex-direction: column; }
+      .comment-form-row input { margin-bottom: 8px; }
     }
 
     /* Scrollbar */
-    .records-list::-webkit-scrollbar { width: 4px; }
-    .records-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+    .records-list::-webkit-scrollbar,
+    .comments-list::-webkit-scrollbar { width: 4px; }
+    .records-list::-webkit-scrollbar-thumb,
+    .comments-list::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -649,11 +759,22 @@
   </div>
 
   <!-- 留言区 -->
-  <div class="comments-card">
+  <div class="comments-card" id="comments-card">
     <div class="comments-title">💬 留言板</div>
-    <div class="comments-desc">有什么问题或建议，可以在这里留言讨论</div>
-    <div id="utterances-placeholder">
-      <div class="comments-loading">加载留言中...</div>
+    <div class="comments-desc">有什么问题或建议，直接留言（无需登录）</div>
+
+    <!-- 留言输入 -->
+    <div class="comment-form">
+      <div class="comment-form-row">
+        <input type="text" id="commentName" placeholder="你的昵称（选填）" maxlength="12">
+        <button class="submit-btn" id="commentSubmit">发布</button>
+      </div>
+      <textarea id="commentContent" placeholder="写点什么..." maxlength="500"></textarea>
+    </div>
+
+    <!-- 留言列表 -->
+    <div id="commentsList">
+      <div class="comment-loading">加载留言中...</div>
     </div>
   </div>
 
@@ -710,16 +831,140 @@ let state = {
   nameA: '室友A',
   nameB: '室友B',
   nameC: '室友C',
-  records: {},    // { '2026-06-10': { person: 'A', photo: 'data:...' | null } }
+  records: {},
 };
 
-// View state
 let viewYear = 2026;
 let viewMonth = 6;
 let modalDateStr = null;
 let pendingPhotoDataUrl = null;
 
-const STORAGE_WARN_THRESHOLD = 4 * 1024 * 1024; // 4MB
+const STORAGE_WARN_THRESHOLD = 4 * 1024 * 1024;
+
+// ============================================================
+//  Supabase 配置 ———— 请替换为你自己的！
+// ============================================================
+const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+const SUPABASE_ANON_KEY = 'your-anon-key-here';
+
+// ============================================================
+//  Comment system using Supabase REST API directly (no SDK needed)
+// ============================================================
+const COMMENT_TABLE = 'comments';
+
+async function fetchComments() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${COMMENT_TABLE}?select=*&order=created_at.desc&limit=50`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+    });
+    if (!res.ok) throw new Error('Fetch failed');
+    return await res.json();
+  } catch (e) {
+    console.warn('Fetch comments error:', e);
+    return null;
+  }
+}
+
+async function postComment(name, content) {
+  try {
+    const body = {
+      name: name || '匿名',
+      content: content,
+      created_at: new Date().toISOString(),
+    };
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${COMMENT_TABLE}`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error('Post failed');
+    return await res.json();
+  } catch (e) {
+    console.warn('Post comment error:', e);
+    return null;
+  }
+}
+
+async function renderComments() {
+  const listEl = document.getElementById('commentsList');
+  listEl.innerHTML = '<div class="comment-loading">加载留言中...</div>';
+
+  const comments = await fetchComments();
+  if (comments === null) {
+    listEl.innerHTML = '<div class="comment-error">⚠️ 留言加载失败，请检查 Supabase 配置</div>';
+    return;
+  }
+
+  if (comments.length === 0) {
+    listEl.innerHTML = '<div class="comment-empty">还没有留言，来写第一条吧 ✍️</div>';
+    return;
+  }
+
+  listEl.innerHTML = '';
+  for (const c of comments) {
+    const div = document.createElement('div');
+    div.className = 'comment-item';
+
+    const time = new Date(c.created_at);
+    const timeStr = `${time.getMonth()+1}月${time.getDate()}日 ${String(time.getHours()).padStart(2,'0')}:${String(time.getMinutes()).padStart(2,'0')}`;
+
+    // Avatar letter
+    const avatarLetter = (c.name || '匿')[0];
+
+    div.innerHTML = `
+      <div class="comment-header">
+        <span class="comment-avatar">${avatarLetter}</span>
+        <span class="comment-author">${escapeHtml(c.name || '匿名')}</span>
+        <span class="comment-time">${timeStr}</span>
+      </div>
+      <div class="comment-body">${escapeHtml(c.content)}</div>
+    `;
+    listEl.appendChild(div);
+  }
+}
+
+function escapeHtml(text) {
+  const d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+async function handleCommentSubmit() {
+  const nameInput = document.getElementById('commentName');
+  const contentInput = document.getElementById('commentContent');
+  const btn = document.getElementById('commentSubmit');
+
+  const name = nameInput.value.trim();
+  const content = contentInput.value.trim();
+
+  if (!content) {
+    alert('请输入留言内容');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '发布中...';
+
+  const result = await postComment(name, content);
+  if (result) {
+    nameInput.value = '';
+    contentInput.value = '';
+    await renderComments();
+  } else {
+    alert('留言发布失败，请检查 Supabase 配置');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '发布';
+}
 
 // ============================================================
 //  Persistence
@@ -808,16 +1053,13 @@ function getCounts() {
 
 function getNextPerson() {
   const counts = getCounts();
-  // Find minimum count
   const minCount = Math.min(counts.A, counts.B, counts.C);
-  // Who has that minimum?
   const candidates = PERSONS.filter(p => counts[p] === minCount);
 
   if (candidates.length === 1) return candidates[0];
 
-  // Tie among those with min count — pick the one who went longest ago
-  const dates = Object.keys(state.records).sort(); // oldest first
-  const lastDateMap = {}; // person -> last date string
+  const dates = Object.keys(state.records).sort();
+  const lastDateMap = {};
   for (const p of candidates) lastDateMap[p] = null;
   for (const dateStr of dates) {
     const val = state.records[dateStr];
@@ -825,10 +1067,9 @@ function getNextPerson() {
     if (lastDateMap[person] !== undefined) lastDateMap[person] = dateStr;
   }
 
-  // Among candidates, pick the one with the oldest last record (or null = never)
   let best = candidates[0];
   for (const p of candidates) {
-    if (lastDateMap[p] === null) return p; // never went before
+    if (lastDateMap[p] === null) return p;
     if (lastDateMap[p] < lastDateMap[best]) best = p;
   }
   return best;
@@ -964,7 +1205,6 @@ function renderHeader() {
   document.getElementById('statB').classList.toggle('active-turn', next === 'B');
   document.getElementById('statC').classList.toggle('active-turn', next === 'C');
 
-  // Hint
   const total = counts.A + counts.B + counts.C;
   let hint = '';
   if (total === 0) {
@@ -1202,6 +1442,7 @@ function init() {
 
   loadNamesToInput();
   renderAll();
+  renderComments();
 
   // Calendar nav
   document.getElementById('prevMonth').addEventListener('click', () => {
@@ -1252,19 +1493,18 @@ function init() {
   document.getElementById('inputC').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') saveNames();
   });
+
+  // Comment submit
+  document.getElementById('commentSubmit').addEventListener('click', handleCommentSubmit);
+  document.getElementById('commentContent').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleCommentSubmit();
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
-
-<!-- Utterances 留言系统 -->
-<script src="https://utteranc.es/client.js"
-        repo="shixuewei0411-sys/trash-calendar"
-        issue-term="pathname"
-        theme="preferred-color-scheme"
-        crossorigin="anonymous"
-        async>
-</script>
-
 </body>
 </html>
