@@ -70,14 +70,14 @@
     /* ========== Stats ========== */
     .stats-row {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 16px;
     }
     .stat-card {
       flex: 1;
       background: #fff;
       border-radius: 12px;
-      padding: 14px 12px;
+      padding: 12px 8px;
       text-align: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       cursor: pointer;
@@ -90,16 +90,17 @@
       box-shadow: 0 0 0 2px #667eea, 0 2px 12px rgba(102,126,234,0.20);
     }
     .stat-name {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       margin-bottom: 4px;
     }
     .stat-count {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
     }
     .stat-card:nth-child(1) .stat-count { color: #667eea; }
     .stat-card:nth-child(2) .stat-count { color: #f093fb; }
+    .stat-card:nth-child(3) .stat-count { color: #4ecdc4; }
 
     /* ========== Calendar ========== */
     .calendar-card {
@@ -189,12 +190,12 @@
     /* Day cell — person badge */
     .day-cell .badge {
       position: absolute;
-      bottom: 3px;
-      width: 20px;
-      height: 20px;
+      bottom: 2px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
-      font-size: 10px;
-      line-height: 20px;
+      font-size: 9px;
+      line-height: 18px;
       text-align: center;
       color: #fff;
       font-weight: 600;
@@ -202,6 +203,7 @@
     }
     .day-cell .badge-a { background: #667eea; }
     .day-cell .badge-b { background: #f093fb; }
+    .day-cell .badge-c { background: #4ecdc4; }
 
     /* Day cell — camera icon (has photo) */
     .day-cell .photo-indicator {
@@ -250,6 +252,7 @@
     }
     .record-person.a { color: #667eea; }
     .record-person.b { color: #f093fb; }
+    .record-person.c { color: #4ecdc4; }
     .record-photo-thumb {
       width: 36px;
       height: 36px;
@@ -325,15 +328,15 @@
     }
     .modal-actions {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 12px;
     }
     .modal-btn {
       flex: 1;
-      padding: 14px;
+      padding: 14px 8px;
       border: none;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: transform 0.1s, box-shadow 0.15s;
@@ -347,6 +350,10 @@
     .modal-btn.b {
       background: linear-gradient(135deg, #f093fb, #f5a6ff);
       box-shadow: 0 4px 12px rgba(240,147,251,0.30);
+    }
+    .modal-btn.c {
+      background: linear-gradient(135deg, #4ecdc4, #6eddd6);
+      box-shadow: 0 4px 12px rgba(78,205,196,0.30);
     }
     .modal-btn.cancel {
       background: #f0f0f0;
@@ -467,24 +474,25 @@
     /* ========== Name Settings ========== */
     .settings-bar {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 12px;
       align-items: center;
     }
     .settings-bar input {
       flex: 1;
-      padding: 8px 12px;
+      padding: 8px 8px;
       border: 1px solid #ddd;
       border-radius: 8px;
       font-size: 14px;
       outline: none;
       transition: border-color 0.15s;
+      min-width: 0;
     }
     .settings-bar input:focus {
       border-color: #667eea;
     }
     .settings-bar button {
-      padding: 8px 16px;
+      padding: 8px 14px;
       border: none;
       border-radius: 8px;
       background: #667eea;
@@ -492,6 +500,7 @@
       font-size: 13px;
       cursor: pointer;
       transition: background 0.15s;
+      white-space: nowrap;
     }
     .settings-bar button:hover { background: #5a6fd6; }
 
@@ -519,7 +528,7 @@
     }
     .storage-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, #667eea, #f093fb);
+      background: linear-gradient(90deg, #667eea, #4ecdc4);
       border-radius: 2px;
       transition: width 0.3s;
     }
@@ -531,8 +540,10 @@
       .next-person { font-size: 26px; }
       .calendar-card { padding: 12px 8px; }
       .day-cell { font-size: 13px; min-height: 40px; }
-      .day-cell .badge { width: 18px; height: 18px; line-height: 18px; font-size: 9px; }
+      .day-cell .badge { width: 16px; height: 16px; line-height: 16px; font-size: 8px; }
       .day-cell .photo-indicator { font-size: 8px; }
+      .settings-bar input { font-size: 12px; padding: 6px; }
+      .modal-btn { font-size: 14px; padding: 12px 6px; }
     }
 
     /* Scrollbar */
@@ -557,12 +568,17 @@
     <div class="stat-card" id="statA">
       <div class="stat-name" id="nameA">室友A</div>
       <div class="stat-count" id="countA">0</div>
-      <div style="font-size:12px;color:#aaa;">次</div>
+      <div style="font-size:11px;color:#aaa;">次</div>
     </div>
     <div class="stat-card" id="statB">
       <div class="stat-name" id="nameB">室友B</div>
       <div class="stat-count" id="countB">0</div>
-      <div style="font-size:12px;color:#aaa;">次</div>
+      <div style="font-size:11px;color:#aaa;">次</div>
+    </div>
+    <div class="stat-card" id="statC">
+      <div class="stat-name" id="nameC">室友C</div>
+      <div class="stat-count" id="countC">0</div>
+      <div style="font-size:11px;color:#aaa;">次</div>
     </div>
   </div>
 
@@ -570,6 +586,7 @@
   <div class="settings-bar">
     <input type="text" id="inputA" placeholder="室友A称呼" maxlength="8">
     <input type="text" id="inputB" placeholder="室友B称呼" maxlength="8">
+    <input type="text" id="inputC" placeholder="室友C称呼" maxlength="8">
     <button id="saveNamesBtn">保存</button>
   </div>
 
@@ -614,6 +631,7 @@
     <div class="modal-actions">
       <button class="modal-btn a" id="modalBtnA">室友A</button>
       <button class="modal-btn b" id="modalBtnB">室友B</button>
+      <button class="modal-btn c" id="modalBtnC">室友C</button>
     </div>
 
     <!-- 照片上传 -->
@@ -649,19 +667,22 @@
 // ============================================================
 const STORAGE_KEY = 'trash_calendar_data';
 
+const PERSONS = ['A', 'B', 'C'];
+const COLORS = { A: '#667eea', B: '#f093fb', C: '#4ecdc4' };
+
 let state = {
   nameA: '室友A',
   nameB: '室友B',
+  nameC: '室友C',
   records: {},    // { '2026-06-10': { person: 'A', photo: 'data:...' | null } }
 };
 
 // View state
 let viewYear = 2026;
-let viewMonth = 6;   // 1-based
+let viewMonth = 6;
 let modalDateStr = null;
-let pendingPhotoDataUrl = null; // photo data URL chosen but not yet saved
+let pendingPhotoDataUrl = null;
 
-// localStorage quota estimate ~5MB. We track size approximately.
 const STORAGE_WARN_THRESHOLD = 4 * 1024 * 1024; // 4MB
 
 // ============================================================
@@ -674,6 +695,7 @@ function loadData() {
       const parsed = JSON.parse(raw);
       state.nameA = parsed.nameA || '室友A';
       state.nameB = parsed.nameB || '室友B';
+      state.nameC = parsed.nameC || '室友C';
       state.records = parsed.records || {};
     }
   } catch (e) {
@@ -686,10 +708,10 @@ function saveData() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       nameA: state.nameA,
       nameB: state.nameB,
+      nameC: state.nameC,
       records: state.records,
     }));
   } catch (e) {
-    // localStorage full — try to warn user
     console.warn('Save data error', e);
     alert('⚠️ 存储空间不足！请删除一些旧打卡照片，或清除浏览器数据。');
   }
@@ -709,25 +731,22 @@ function getStorageSize() {
 
 function renderStorageBar() {
   const size = getStorageSize();
-  const sizeKB = Math.round(size / 1024);
   const sizeMB = (size / 1024 / 1024).toFixed(1);
   const bar = document.getElementById('storageBar');
   const fill = document.getElementById('storageFill');
   const text = document.getElementById('storageText');
 
-  // Only show if there are photos (size > 1KB)
   if (size < 1024) {
     bar.style.display = 'none';
     return;
   }
   bar.style.display = 'block';
 
-  // Estimate percentage against ~5MB quota
   const pct = Math.min(100, (size / (5 * 1024 * 1024)) * 100);
   fill.style.width = pct + '%';
-  if (pct > 80) fill.style.background = 'linear-gradient(90deg, #e06c6c, #f093fb)';
-  else if (pct > 60) fill.style.background = 'linear-gradient(90deg, #f5a623, #f093fb)';
-  else fill.style.background = 'linear-gradient(90deg, #667eea, #f093fb)';
+  if (pct > 80) fill.style.background = 'linear-gradient(90deg, #e06c6c, #4ecdc4)';
+  else if (pct > 60) fill.style.background = 'linear-gradient(90deg, #f5a623, #4ecdc4)';
+  else fill.style.background = 'linear-gradient(90deg, #667eea, #4ecdc4)';
 
   text.textContent = sizeMB + ' MB';
 }
@@ -735,25 +754,48 @@ function renderStorageBar() {
 // ============================================================
 //  Core Logic
 // ============================================================
+function getName(person) {
+  if (person === 'A') return state.nameA;
+  if (person === 'B') return state.nameB;
+  if (person === 'C') return state.nameC;
+  return '?';
+}
+
 function getCounts() {
-  let countA = 0, countB = 0;
+  const counts = { A: 0, B: 0, C: 0 };
   for (const val of Object.values(state.records)) {
-    const person = val.person || val; // support old format
-    if (person === 'A') countA++;
-    else if (person === 'B') countB++;
+    const person = val.person || val;
+    if (counts[person] !== undefined) counts[person]++;
   }
-  return { countA, countB };
+  return counts;
 }
 
 function getNextPerson() {
-  const { countA, countB } = getCounts();
-  if (countA < countB) return 'A';
-  if (countB < countA) return 'B';
-  const dates = Object.keys(state.records).sort();
-  if (dates.length === 0) return 'A';
-  const lastVal = state.records[dates[dates.length - 1]];
-  const lastPerson = lastVal.person || lastVal;
-  return lastPerson === 'A' ? 'B' : 'A';
+  const counts = getCounts();
+  // Find minimum count
+  const minCount = Math.min(counts.A, counts.B, counts.C);
+  // Who has that minimum?
+  const candidates = PERSONS.filter(p => counts[p] === minCount);
+
+  if (candidates.length === 1) return candidates[0];
+
+  // Tie among those with min count — pick the one who went longest ago
+  const dates = Object.keys(state.records).sort(); // oldest first
+  const lastDateMap = {}; // person -> last date string
+  for (const p of candidates) lastDateMap[p] = null;
+  for (const dateStr of dates) {
+    const val = state.records[dateStr];
+    const person = val.person || val;
+    if (lastDateMap[person] !== undefined) lastDateMap[person] = dateStr;
+  }
+
+  // Among candidates, pick the one with the oldest last record (or null = never)
+  let best = candidates[0];
+  for (const p of candidates) {
+    if (lastDateMap[p] === null) return p; // never went before
+    if (lastDateMap[p] < lastDateMap[best]) best = p;
+  }
+  return best;
 }
 
 function getSortedRecords(limit = 50) {
@@ -763,7 +805,7 @@ function getSortedRecords(limit = 50) {
 }
 
 // ============================================================
-//  Image compression (to fit in localStorage)
+//  Image compression
 // ============================================================
 function compressImage(file, maxWidth = 1024, quality = 0.7) {
   return new Promise((resolve, reject) => {
@@ -831,7 +873,6 @@ function renderCalendar() {
       badge.textContent = person;
       cell.appendChild(badge);
 
-      // Photo indicator
       if (record.photo) {
         const cam = document.createElement('span');
         cam.className = 'photo-indicator';
@@ -872,24 +913,34 @@ function formatDateCN(dateStr) {
 // ============================================================
 function renderHeader() {
   const next = getNextPerson();
-  const name = next === 'A' ? state.nameA : state.nameB;
-  document.getElementById('nextName').textContent = name;
+  const nextName = getName(next);
+  document.getElementById('nextName').textContent = nextName;
 
-  const { countA, countB } = getCounts();
-  document.getElementById('countA').textContent = countA;
-  document.getElementById('countB').textContent = countB;
+  const counts = getCounts();
+  document.getElementById('countA').textContent = counts.A;
+  document.getElementById('countB').textContent = counts.B;
+  document.getElementById('countC').textContent = counts.C;
   document.getElementById('nameA').textContent = state.nameA;
   document.getElementById('nameB').textContent = state.nameB;
+  document.getElementById('nameC').textContent = state.nameC;
 
   document.getElementById('statA').classList.toggle('active-turn', next === 'A');
   document.getElementById('statB').classList.toggle('active-turn', next === 'B');
+  document.getElementById('statC').classList.toggle('active-turn', next === 'C');
 
-  const diff = Math.abs(countA - countB);
+  // Hint
+  const total = counts.A + counts.B + counts.C;
   let hint = '';
-  if (diff === 0) {
-    hint = countA === 0 ? '还没有打卡记录，点击日期开始吧' : '当前次数持平，轮流交替';
+  if (total === 0) {
+    hint = '还没有打卡记录，点击日期开始吧';
   } else {
-    hint = `${name}比另一位少 ${diff} 次`;
+    const minCount = Math.min(counts.A, counts.B, counts.C);
+    const maxCount = Math.max(counts.A, counts.B, counts.C);
+    if (minCount === maxCount) {
+      hint = '当前次数持平，按先后顺序轮流';
+    } else {
+      hint = `${nextName}比最多的少 ${maxCount - minCount} 次`;
+    }
   }
   document.getElementById('nextHint').textContent = hint;
 }
@@ -909,12 +960,11 @@ function renderRecords() {
     const person = record.person || record;
     const div = document.createElement('div');
     div.className = 'record-item';
-    const name = person === 'A' ? state.nameA : state.nameB;
+    const name = getName(person);
     div.innerHTML = `
       <span class="record-date">${formatDateCN(dateStr)}</span>
       <span class="record-person ${person.toLowerCase()}">${name}</span>
     `;
-    // Photo thumbnail
     if (record.photo) {
       const img = document.createElement('img');
       img.className = 'record-photo-thumb';
@@ -936,7 +986,7 @@ function renderRecords() {
 }
 
 // ============================================================
-//  Photo Viewer (full-screen)
+//  Photo Viewer
 // ============================================================
 function openViewer(src) {
   document.getElementById('viewerImg').src = src;
@@ -945,7 +995,6 @@ function openViewer(src) {
 
 function closeViewer() {
   document.getElementById('viewer').classList.remove('open');
-  // Clear src after transition to free memory
   setTimeout(() => {
     if (!document.getElementById('viewer').classList.contains('open')) {
       document.getElementById('viewerImg').src = '';
@@ -962,13 +1011,12 @@ function openModal(dateStr) {
   document.getElementById('modalDate').textContent = formatDateCN(dateStr);
   document.getElementById('modalBtnA').textContent = state.nameA + ' (A)';
   document.getElementById('modalBtnB').textContent = state.nameB + ' (B)';
+  document.getElementById('modalBtnC').textContent = state.nameC + ' (C)';
 
   const record = state.records[dateStr];
   const existing = !!(record && record.person);
-  const deleteBtn = document.getElementById('modalDelete');
-  deleteBtn.style.display = existing ? 'block' : 'none';
+  document.getElementById('modalDelete').style.display = existing ? 'block' : 'none';
 
-  // Show existing photo
   resetPhotoUI();
   if (record && record.photo) {
     showPhotoPreview(record.photo);
@@ -986,12 +1034,10 @@ function resetPhotoUI() {
 }
 
 function showPhotoPreview(dataUrl) {
-  const previewWrap = document.getElementById('photoPreviewWrap');
-  const label = document.getElementById('photoLabel');
   const preview = document.getElementById('photoPreview');
   preview.src = dataUrl;
-  previewWrap.style.display = 'inline-block';
-  label.style.display = 'none';
+  document.getElementById('photoPreviewWrap').style.display = 'inline-block';
+  document.getElementById('photoLabel').style.display = 'none';
   document.getElementById('photoArea').classList.add('has-photo');
 }
 
@@ -1024,19 +1070,16 @@ function handleModalDelete() {
 }
 
 // ============================================================
-//  Photo upload in modal
+//  Photo upload
 // ============================================================
 async function handlePhotoUpload(file) {
   if (!file) return;
-  // Check file type
   if (!file.type.startsWith('image/')) {
     alert('请上传图片文件');
     return;
   }
-  // Compress
   try {
     const dataUrl = await compressImage(file, 1024, 0.7);
-    // Estimate size
     const sizeInBytes = new Blob([dataUrl]).size;
     const totalSize = getStorageSize() + sizeInBytes;
 
@@ -1057,8 +1100,6 @@ async function handlePhotoUpload(file) {
 function handlePhotoRemove() {
   pendingPhotoDataUrl = null;
   resetPhotoUI();
-
-  // If record exists, also clear its photo from storage (on next save)
   if (modalDateStr && state.records[modalDateStr]) {
     state.records[modalDateStr].photo = null;
   }
@@ -1070,10 +1111,13 @@ function handlePhotoRemove() {
 function saveNames() {
   const a = document.getElementById('inputA').value.trim();
   const b = document.getElementById('inputB').value.trim();
+  const c = document.getElementById('inputC').value.trim();
   if (a) state.nameA = a;
   if (b) state.nameB = b;
+  if (c) state.nameC = c;
   if (!state.nameA) state.nameA = '室友A';
   if (!state.nameB) state.nameB = '室友B';
+  if (!state.nameC) state.nameC = '室友C';
   saveData();
   renderHeader();
   renderRecords();
@@ -1082,6 +1126,7 @@ function saveNames() {
 function loadNamesToInput() {
   document.getElementById('inputA').value = state.nameA;
   document.getElementById('inputB').value = state.nameB;
+  document.getElementById('inputC').value = state.nameC;
 }
 
 // ============================================================
@@ -1101,7 +1146,6 @@ function migrateOldFormat() {
   let changed = false;
   for (const [key, val] of Object.entries(state.records)) {
     if (typeof val === 'string') {
-      // Old format: 'A' or 'B' as string
       state.records[key] = { person: val, photo: null };
       changed = true;
     }
@@ -1138,6 +1182,7 @@ function init() {
   // Modal
   document.getElementById('modalBtnA').addEventListener('click', () => handleModalPick('A'));
   document.getElementById('modalBtnB').addEventListener('click', () => handleModalPick('B'));
+  document.getElementById('modalBtnC').addEventListener('click', () => handleModalPick('C'));
   document.getElementById('modalCancel').addEventListener('click', closeModal);
   document.getElementById('modalDelete').addEventListener('click', handleModalDelete);
   document.getElementById('modal').addEventListener('click', (e) => {
@@ -1151,9 +1196,7 @@ function init() {
       handlePhotoUpload(e.target.files[0]);
     }
   });
-  // Click the upload area to trigger file picker
   document.getElementById('photoArea').addEventListener('click', (e) => {
-    // Don't trigger if clicking remove button or preview
     if (e.target.closest('.photo-remove-btn') || e.target.closest('.photo-preview')) return;
     photoInput.click();
   });
@@ -1170,7 +1213,7 @@ function init() {
 
   // Names
   document.getElementById('saveNamesBtn').addEventListener('click', saveNames);
-  document.getElementById('inputB').addEventListener('keydown', (e) => {
+  document.getElementById('inputC').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') saveNames();
   });
 }
