@@ -533,6 +533,32 @@
       transition: width 0.3s;
     }
 
+    /* ========== Comments ========== */
+    .comments-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-top: 16px;
+    }
+    .comments-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #555;
+    }
+    .comments-desc {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 12px;
+    }
+    .comments-loading {
+      text-align: center;
+      color: #bbb;
+      padding: 24px 0;
+      font-size: 14px;
+    }
+
     /* ========== Responsive ========== */
     @media (max-width: 420px) {
       body { padding: 10px; }
@@ -621,6 +647,16 @@
       <div class="empty-records">还没有打卡记录，点击日期开始吧</div>
     </div>
   </div>
+
+  <!-- 留言区 -->
+  <div class="comments-card">
+    <div class="comments-title">💬 留言板</div>
+    <div class="comments-desc">有什么问题或建议，可以在这里留言讨论</div>
+    <div id="utterances-placeholder">
+      <div class="comments-loading">加载留言中...</div>
+    </div>
+  </div>
+
 </div>
 
 <!-- 打卡弹窗 -->
@@ -1220,5 +1256,15 @@ function init() {
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
+
+<!-- Utterances 留言系统 -->
+<script src="https://utteranc.es/client.js"
+        repo="shixuewei0411-sys/trash-calendar"
+        issue-term="pathname"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+</script>
+
 </body>
 </html>
